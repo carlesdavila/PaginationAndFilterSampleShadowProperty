@@ -19,7 +19,7 @@ namespace PaginationAndFilterSample.Client
 
             CreateAndEditCustomer();
 
-            PaginateCustomers("expression");
+            PaginateCustomers("Name");
         }
 
         private static void PaginateCustomers(string expression)

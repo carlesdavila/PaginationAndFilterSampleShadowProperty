@@ -5,27 +5,28 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using PaginationAndFilterSample.Domain;
 using PaginationAndFilterSample.Persistence;
+using PaginationAndFilterSample.Persistence.QueryObjects;
 
 namespace PaginationAndFilterSample.Client
 {
-    class Program
+    static class Program
     {
-        private static CustomerDbContext _context = new CustomerDbContext();
-        private static Fixture fixture = new Fixture();
+        private static readonly CustomerDbContext Context = new CustomerDbContext();
+        private static readonly Fixture Fixture = new Fixture();
         static void Main(string[] args)
         {
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
+            Context.Database.EnsureDeleted();
+            Context.Database.EnsureCreated();
 
             CreateAndEditCustomer();
 
-            PaginateCustomers("Name");
+            PaginateCustomers("name,lastModified");
         }
 
         private static void PaginateCustomers(string expression)
         {
-            var result = _context.Customers
-                .OrderBy(c => EF.Property<DateTime>(c, "LastModified"))
+            var result = Context.Customers
+                .MultiColumnOrderBy(expression, "LastModified", "Create")
                 .Select(x => new CustomerDto()
                 {
                     Id = x.Id,
@@ -42,14 +43,14 @@ namespace PaginationAndFilterSample.Client
 
         private static void CreateAndEditCustomer()
         {
-            fixture.RepeatCount = 100;
-            fixture.Customize<Customer>(o => o
+            Fixture.RepeatCount = 100;
+            Fixture.Customize<Customer>(o => o
                     .Without(c => c.Id));
 
-            var customersToCreate = fixture.CreateMany<Customer>();
+            var customersToCreate = Fixture.CreateMany<Customer>();
 
-           _context.Customers.AddRange(customersToCreate);
-           _context.SaveChanges();
+           Context.Customers.AddRange(customersToCreate);
+           Context.SaveChanges();
 
         }
     }

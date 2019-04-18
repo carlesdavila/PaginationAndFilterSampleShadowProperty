@@ -25,8 +25,8 @@ namespace PaginationAndFilterSample.Persistence
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                modelBuilder.Entity(entityType.Name).Property<DateTime>("Created");
-                modelBuilder.Entity(entityType.Name).Property<DateTime>("LastModified");
+                modelBuilder.Entity(entityType.Name).Property<DateTime>(ShadowPropertyConstants.Created);
+                modelBuilder.Entity(entityType.Name).Property<DateTime>(ShadowPropertyConstants.LastModified);
             }
         }
 
@@ -37,11 +37,11 @@ namespace PaginationAndFilterSample.Persistence
             foreach (var entry in ChangeTracker.Entries()
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
             {
-                entry.Property("LastModified").CurrentValue = timestamp;
+                entry.Property(ShadowPropertyConstants.LastModified).CurrentValue = timestamp;
 
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property("Created").CurrentValue = timestamp;
+                    entry.Property(ShadowPropertyConstants.Created).CurrentValue = timestamp;
                 }
             }
             return base.SaveChanges();

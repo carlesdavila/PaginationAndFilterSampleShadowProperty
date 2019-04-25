@@ -26,7 +26,7 @@ namespace PaginationAndFilterSample.Client
         private static void PaginateCustomers(string expression)
         {
             var result = Context.Customers
-                .MultiColumnOrderBy(expression, "LastModified", "Create")
+                .MultiColumnOrderBy(expression)
                 .Select(x => new CustomerDto()
                 {
                     Id = x.Id,
